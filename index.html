@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポテト王国 // バカみたいな玉座シミュレーター</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for funny bold look -->
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        rounded: ['"M PLUS Rounded 1c"', 'sans-serif']
+                    },
+                    colors: {
+                        potato: {
+                            light: '#ffd166',
+                            DEFAULT: '#f4a261',
+                            dark: '#e76f51',
+                            deep: '#b5838d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background: linear-gradient(135deg, #fefae0 0%, #faedcd 100%);
+            color: #2b2d42;
+            overflow-x: hidden;
+        }
+        .bouncy-btn {
+            transition: all 0.1s ease;
+            box-shadow: 0 6px 0 #b5651d;
+        }
+        .bouncy-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #b5651d;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        .floating-potato {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        .wiggle-box {
+            animation: wiggle 0.4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 md:p-8 select-none">
+
+    <header class="text-center max-w-2xl mx-auto mb-6">
+        <div class="inline-block bg-amber-200 border-4 border-amber-500 rounded-full px-6 py-2 shadow-lg mb-2">
+            <span class="text-amber-800 font-black text-sm md:text-base">🥔 栄光のポテト王国 第69代国王 👑</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black text-amber-900 tracking-wider drop-shadow-md">
+            いも！いも！大帝国
+        </h1>
+        <p class="text-amber-800/80 text-sm md:text-base mt-1">
+            ボタンを押しまくって、大臣たちからのバカみたいな要求に答えろ！
+        </p>
+    </header>
+
+    <main class="max-w-4xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow items-center">
+
+        <section class="bg-white/90 border-4 border-amber-400 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+            <h2 class="text-lg font-black text-amber-900 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-amber-500"></i> 国のバロメーター
+            </h2>
+            <div class="space-y-4 font-bold text-sm">
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-amber-900">🥔 いもの備蓄</span>
+                        <span id="stat-potato" class="text-amber-600">50</span>
+                    </div>
+                    <div class="w-full bg-amber-100 h-4 rounded-full overflow-hidden border-2 border-amber-300">
+                        <div id="bar-potato" class="bg-amber-500 h-full transition-all duration-300" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-amber-900">🤪 国民のテンション</span>
+                        <span id="stat-happy" class="text-pink-600">50</span>
+                    </div>
+                    <div class="w-full bg-pink-100 h-4 rounded-full overflow-hidden border-2 border-pink-300">
+                        <div id="bar-happy" class="bg-pink-500 h-full transition-all duration-300" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-amber-900">💰 謎の財政</span>
+                        <span id="stat-money" class="text-emerald-600">50円</span>
+                    </div>
+                    <div class="w-full bg-emerald-100 h-4 rounded-full overflow-hidden border-2 border-emerald-300">
+                        <div id="bar-money" class="bg-emerald-500 h-full transition-all duration-300" style="width: 50%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t-2 border-amber-100 text-center">
+                <div class="text-xs text-amber-700 font-bold">現在の称号:</div>
+                <div id="king-title" class="text-lg font-black text-amber-900 mt-1">ただの芋むし王</div>
+            </div>
+        </section>
+
+        <section class="flex flex-col items-center justify-center text-center">
+            <div class="relative mb-6">
+                <!-- Big Potato Character -->
+                <div onclick="clickKingPotato()" class="cursor-pointer floating-potato text-8xl md:text-9xl filter drop-shadow-[0_15px_15px_rgba(217,119,6,0.4)] transition-transform active:scale-90 select-none" title="ポテトを押せ！">
+                    🥔
+                </div>
+                <!-- Crown -->
+                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-5xl animate-bounce">
+                    👑
+                </div>
+                <!-- Click Effect Popups container -->
+                <div id="popups-container" class="absolute inset-0 pointer-events-none"></div>
+            </div>
+
+            <button onclick="clickKingPotato()" class="bouncy-btn w-full bg-amber-500 hover:bg-amber-400 text-white font-black text-xl py-4 px-8 rounded-2xl border-4 border-amber-600 shadow-xl flex items-center justify-center gap-3">
+                <i class="fa-solid fa-hand-pointer"></i> 大いなる芋を連打！
+            </button>
+            <div class="mt-2 text-xs text-amber-800 font-bold">総クリック数: <span id="click-count">0</span>回</div>
+        </section>
+
+        <section class="bg-white/90 border-4 border-amber-400 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-lg font-black text-amber-900 flex items-center gap-2">
+                        <i class="fa-solid fa-bullhorn text-amber-500"></i> 大臣からの上奏
+                    </h2>
+                    <span id="minister-emoji" class="text-2xl">🥸</span>
+                </div>
+                <div id="event-box" class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 text-sm font-bold text-amber-900 mb-4 min-h-[90px] flex items-center justify-center text-center">
+                    「国王様！ 国民全員にフライドポテトの靴下を配るべきです！」
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <button onclick="answerEvent(true)" class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black text-sm py-3 px-4 rounded-xl border-b-4 border-emerald-700 transition-all active:translate-y-1">
+                    👍 「それ採用！バカ最高！」
+                </button>
+                <button onclick="answerEvent(false)" class="w-full bg-rose-500 hover:bg-rose-400 text-white font-black text-sm py-3 px-4 rounded-xl border-b-4 border-rose-700 transition-all active:translate-y-1">
+                    👎 「正気か？却下だ！」
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center mt-6 text-xs text-amber-800 font-bold">
+        <p>※ この王国ではすべての決定が適当です。責任は負いません。</p>
+    </footer>
+
+    <script>
+        let potatoCount = 0;
+        let stats = {
+            potato: 50,
+            happy: 50,
+            money: 50
+        };
+
+        const events = [
+            { text: "「国王様！ 国民全員にフライドポテトの靴下を配るべきです！」", yesPotato: 10, yesHappy: 20, yesMoney: -10, noPotato: -5, noHappy: -10, noMoney: 5 },
+            { text: "「隣国から『ポテトサラダにリンゴを入れるべきか』という宣戦布告が届きました！」", yesPotato: -20, yesHappy: -30, yesMoney: 20, yesPotatoNo: 30, yesHappyNo: 40, yesMoneyNo: -15 },
+            { text: "「宮殿の庭を全部マッシュポテトに改装したいのですが！」", yesPotato: 40, yesHappy: 30, yesMoney: -30, noPotato: -10, noHappy: -20, noMoney: 10 },
+            { text: "「道端の石ころを全部いもに置き換える予算をください！」", yesPotato: 25, yesHappy: 15, yesMoney: -25, noPotato: -15, noHappy: -5, noMoney: 15 },
+            { text: "「国民が『芋以外のものが食べたい』と泣いて訴えています！」", yesPotato: -30, yesHappy: -40, yesMoney: 30, noPotato: 50, noHappy: -50, noMoney: -20 },
+            { text: "「金庫から大量のジャガイモの芽が生えてきました！」", yesPotato: 30, yesHappy: 10, yesMoney: -10, noPotato: -20, noHappy: -10, noMoney: 20 }
+        ];
+
+        let currentEventIdx = 0;
+
+        function updateDisplay() {
+            document.getElementById('click-count').innerText = potatoCount;
+            document.getElementById('stat-potato').innerText = stats.potato;
+            document.getElementById('stat-happy').innerText = stats.happy;
+            document.getElementById('stat-money').innerText = stats.money + '円';
+
+            document.getElementById('bar-potato').style.width = Math.max(0, Math.min(100, stats.potato)) + '%';
+            document.getElementById('bar-happy').style.width = Math.max(0, Math.min(100, stats.happy)) + '%';
+            document.getElementById('bar-money').style.width = Math.max(0, Math.min(100, stats.money)) + '%';
+
+            let title = "ただの芋むし王";
+            if (potatoCount > 100) title = "伝説のフライドポテト皇帝";
+            if (potatoCount > 50) title = "ちょっと偉いジャガイモ伯爵";
+            if (stats.happy > 80) title = "ハッピーマッシュルーム王";
+            if (stats.potato < 10) title = "飢餓のじゃが芋難民";
+            document.getElementById('king-title').innerText = title;
+        }
+
+        function clickKingPotato() {
+            potatoCount++;
+            stats.potato += 2;
+            stats.happy += 1;
+            playSound(440, 0.1);
+            updateDisplay();
+
+            // Create floating +1 text
+            const container = document.getElementById('popups-container');
+            const popup = document.createElement('div');
+            popup.innerText = "+1 🥔";
+            popup.className = "absolute text-amber-600 font-black text-xl animate-bounce pointer-events-none";
+            popup.style.left = (40 + Math.random() * 20) + '%';
+            popup.style.top = (30 + Math.random() * 20) + '%';
+            container.appendChild(popup);
+            setTimeout(() => popup.remove(), 800);
+        }
+
+        function answerEvent(isYes) {
+            const ev = events[currentEventIdx];
+            if (isYes) {
+                stats.potato += ev.yesPotato;
+                stats.happy += ev.yesHappy;
+                stats.money += ev.yesMoney;
+                playSound(600, 0.2);
+            } else {
+                stats.potato += (ev.yesPotatoNo || -10);
+                stats.happy += (ev.yesHappyNo || -10);
+                stats.money += (ev.yesMoneyNo || 10);
+                playSound(200, 0.2);
+            }
+
+            // Bound stats
+            stats.potato = Math.max(0, Math.min(100, stats.potato));
+            stats.happy = Math.max(0, Math.min(100, stats.happy));
+            stats.money = Math.max(0, Math.min(100, stats.money));
+
+            currentEventIdx = (currentEventIdx + 1) % events.length;
+            document.getElementById('event-box').innerText = events[currentEventIdx].text;
+            updateDisplay();
+        }
+
+        // Simple Web Audio Sound effect generator
+        function playSound(freq, duration) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {
+                // Ignore audio restriction errors
+            }
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>
